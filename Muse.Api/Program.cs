@@ -1,3 +1,5 @@
+// IMPORTANT : Microsoft.OpenApi has been downgraded to Version 2.3.5 due to versioning errors
+// https://github.com/dotnet/aspnetcore/issues/64317
 
 namespace Muse.Api
 {
