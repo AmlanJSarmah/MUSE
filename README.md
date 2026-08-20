@@ -13,10 +13,12 @@ dotnet tool install --global dotnet-ef
 dotnet ef database update
 ```
 
-### Database URL String
+### Database URL String & Spotify API Keys
 Make sure you run the following commands
 ```shell
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=MuseDb;User Id=sa;Password=<yout_password_here>;TrustServerCertificate=True;"
+dotnet user-secrets set "Spotify:ClientId" "your-client-id"
+dotnet user-secrets set "Spotify:ClientSecret" "your-client-secret"
 ```
-**Note** : Make sure to change the username and password in the above connection string.  
+**Note** : Make sure to change the username and password in the above connection string. Also, the client id and secret. 
