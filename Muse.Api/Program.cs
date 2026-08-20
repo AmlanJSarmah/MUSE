@@ -1,6 +1,8 @@
 // IMPORTANT : Microsoft.OpenApi has been downgraded to Version 2.3.5 due to versioning errors
 // https://github.com/dotnet/aspnetcore/issues/64317
 
+using Muse.Api.Services;
+
 namespace Muse.Api
 {
     public class Program
@@ -10,6 +12,9 @@ namespace Muse.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddHttpClient();
+            builder.Services.AddSingleton<IMusicBrainzService, MusicBrainzService>(); 
+            builder.Services.AddSingleton<ISpotifyService, SpotifyService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
