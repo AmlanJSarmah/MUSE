@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Muse.Api.Data;
 
 namespace Muse.Api
 {
@@ -10,15 +12,14 @@ namespace Muse.Api
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddDbContext<MuseDbContext>(
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("MuseConnection")));
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
             }
 
             app.UseAuthorization();
