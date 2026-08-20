@@ -13,6 +13,7 @@ namespace Muse.Api
 
             // Add services to the container.
             builder.Services.AddHttpClient();
+            builder.Services.AddSingleton<IMusicBrainzService, MusicBrainzService>(); 
             builder.Services.AddSingleton<ISpotifyService, SpotifyService>();
 
             builder.Services.AddControllers();

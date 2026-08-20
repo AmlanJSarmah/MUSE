@@ -2,6 +2,7 @@ using System.Data;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Muse.Api.Services;
 
@@ -51,8 +52,17 @@ public class SpotifyService : ISpotifyService
         return _cachedToken;
     }
     
+    private static string NormalizeTitle(string title)
+    {
+        // Strip "(Original Motion Picture Soundtrack)", "(Music From...)", etc.
+        var withoutParens = Regex.Replace(title, @"[\(\[].*?[\)\]]", "");
+        // Strip punctuation, collapse whitespace, lowercase
+        var alphanumericOnly = Regex.Replace(withoutParens, @"[^a-zA-Z0-9\s]", "");
+        return Regex.Replace(alphanumericOnly, @"\s+", " ").Trim().ToLowerInvariant();
+    }
+    
     // Get the actual songs
-    // find official album -> songs
+    // find official album -> normalize titles -> songs
     public async Task<(string AlbumName, List<SongResult> Songs)?> GetSoundtrackAsync(string movieName)
     {
         // Get mandatory spotify token
@@ -61,14 +71,27 @@ public class SpotifyService : ISpotifyService
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         
         //Get albums
-        var searchUrl = $"https://api.spotify.com/v1/search?q={Uri.EscapeDataString($"{movieName} soundtrack")}&type=album&limit=1";
+        var searchUrl = $"https://api.spotify.com/v1/search?q={Uri.EscapeDataString($"{movieName} soundtrack")}&type=album&limit=10";
         var searchJson = await client.GetFromJsonAsync<JsonElement>(searchUrl);
         var albums = searchJson.GetProperty("albums").GetProperty("items"); 
         
         if (albums.GetArrayLength() == 0)
             return null;
+        
+        var normalizedTarget = NormalizeTitle(movieName);
 
-        var album = albums[0];
+        JsonElement? exactMatch = null;
+        foreach (var candidate in albums.EnumerateArray())
+        {
+            var candidateName = candidate.GetProperty("name").GetString() ?? "";
+            if (NormalizeTitle(candidateName) == normalizedTarget)
+            {
+                exactMatch = candidate;
+                break; 
+            }
+        }
+
+        var album = exactMatch ?? albums[0];
         var albumId = album.GetProperty("id").GetString();
         var albumName = album.GetProperty("name").GetString()!;
         

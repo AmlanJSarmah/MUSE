@@ -3,7 +3,13 @@ Accept: application/json
 
 ###
 
-GET http://localhost:5235/app/songs?title=There Will Be Blood
+GET http://localhost:5235/app/songs-from-spotify?title=Paris Texas
+Accept: application/json
+
+### 
+
+
+GET http://localhost:5235/app/songs?title=Kes
 Accept: application/json
 
 ### 
