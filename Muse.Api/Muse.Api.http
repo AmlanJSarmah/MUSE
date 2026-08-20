@@ -2,3 +2,8 @@ GET http://localhost:5235/app/
 Accept: application/json
 
 ###
+
+GET http://localhost:5235/app/songs?title=There Will Be Blood
+Accept: application/json
+
+### 
